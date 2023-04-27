@@ -1,0 +1,19 @@
+{
+  "name": "rpn-calculator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --extension test.js --recursive test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "hamjest": "^4.0.1",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "crocks": "^0.12.4"
+  }
+}
