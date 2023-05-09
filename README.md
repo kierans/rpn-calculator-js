@@ -6,25 +6,25 @@ This is a Functional Programming port of the [Java RPN project][1] using JavaScr
 [Crocks][2]. The primary purpose is to show the use of the State Monad in action compared with
 an OOP equivalent program that mutates state.
 
-The below are the requirements copied from the Java Project, with the modification that only 
-integers are accepted in this calculator.
+The below are the requirements copied from the Java Project.
 
->The calculator has a stack that contains integer numbers.
+>The calculator has a stack that contains real numbers.
 >
 > - The calculator waits for user input and expects to receive strings containing whitespace 
  separated lists of numbers and operators.
 > - Numbers are pushed on to the stack. Operators operate on numbers that are on the stack.
-> - Available operators are +, -, *, /, sqrt, undo, clear.
+> - Available operators are `+`, `-`, `*`, `/`, `sqrt`, `undo`, `clear`.
 > - Operators pop their parameters off the stack, and push their results back onto the stack.
-> - The 'clear' operator removes all items from the stack.
-> - The 'undo' operator undoes the previous operation. "undo undo" will undo the previous two 
+> - The `clear` operator removes all items from the stack.
+> - The `undo` operator undoes the previous operation. `undo undo` will undo the previous two 
 operations.
-> - sqrt performs a square root on the top item from the stack.
-> - The '+', '-', '*', '/' operators perform addition, subtraction, multiplication and 
+> - `sqrt` performs a square root on the top item from the stack.
+> - The `+`, `-`, `*`, `/` operators perform addition, subtraction, multiplication and 
  division respectively on the top two items from the stack.
 > - After processing an input string, the calculator displays the current contents of the 
  stack as a space-separated list.
-> - Numbers are stored on the stack as integers.
+> - Numbers are stored on the stack to at least 15 decimal places of precision, but displayed 
+ to 10 decimal places (or less if it causes no loss of precision).
 > - If an operator cannot find a sufficient number of parameters on the stack, a warning is 
  displayed: `operator <operator> (position: <pos>): insufficient parameters`
 > - If an illegal arithmetic operation is attempted (eg: divide by 0), a warning is displayed 
