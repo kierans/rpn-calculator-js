@@ -46,6 +46,10 @@ const tokenType = objOf("type")
 // newBigDecimal :: a -> BigDecimal
 const newBigDecimal = (a) => new BigDecimal(a)
 
+// parseNumber :: a -> Maybe BigDecimal
+const parseNumber =
+	resultToMaybe(tryCatch(newBigDecimal))
+
 // isCommandToken :: String -> Maybe Object
 const isCommandToken =
 	compose(map(constant(tokenType(Types.COMMAND))), commandFromValue)
@@ -53,7 +57,7 @@ const isCommandToken =
 // isNumberToken :: String -> Maybe Object
 const isNumberToken =
 	pipe(
-		resultToMaybe(tryCatch(newBigDecimal)),
+		parseNumber,
 		map(compose(assign(tokenType(Types.NUMBER)), objOf("number")))
 	)
 
@@ -61,18 +65,14 @@ const isNumberToken =
 const isOperatorToken =
 	compose(map(constant(tokenType(Types.OPERATOR))), operatorFromValue)
 
-// tokenIdentifiers :: [(String -> Maybe Object)]
-const tokenIdentifiers = [
-	isCommandToken,
-	isOperatorToken,
-	isNumberToken
-]
-
 // determineTokenType :: String -> Object
 const determineTokenType =
 	pipe(
-		applyFunctor(tokenIdentifiers),
-		mreduce(First),
+		compose(mreduce(First), applyFunctor([
+			isCommandToken,
+			isOperatorToken,
+			isNumberToken
+		])),
 		option(tokenType(Types.INVALID_INPUT))
 	)
 
