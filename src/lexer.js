@@ -9,6 +9,7 @@ const Sum = require("crocks/Sum");
 const assign = require("crocks/helpers/assign");
 const bimap = require("crocks/pointfree/bimap");
 const compose = require("crocks/helpers/compose");
+const composeK = require("crocks/helpers/composeK");
 const concat = require("crocks/pointfree/concat");
 const constant = require("crocks/combinators/constant");
 const contramap = require("crocks/pointfree/contramap");
@@ -21,7 +22,6 @@ const objOf = require("crocks/helpers/objOf");
 const option = require("crocks/pointfree/option");
 const partial = require("crocks/helpers/partial");
 const pipe = require("crocks/helpers/pipe");
-const pipeK = require("crocks/helpers/pipeK");
 const reduce = require("crocks/pointfree/reduce");
 const resultToMaybe = require("crocks/Maybe/resultToMaybe");
 const snd = require("crocks/Pair/snd");
@@ -47,8 +47,7 @@ const tokenType = objOf("type")
 const newBigDecimal = (a) => new BigDecimal(a)
 
 // parseNumber :: a -> Maybe BigDecimal
-const parseNumber =
-	resultToMaybe(tryCatch(newBigDecimal))
+const parseNumber = resultToMaybe(tryCatch(newBigDecimal))
 
 // isCommandToken :: String -> Maybe Object
 const isCommandToken =
@@ -90,8 +89,7 @@ const wordLength =
 	compose(add(1), length)
 
 // wordPos :: Pair Sum [Token] -> Number
-const wordPos =
-	compose(valueOf, fst)
+const wordPos = compose(valueOf, fst)
 
 // consumeWord :: String -> State (Pair Sum [Token]) (Pair Number Token)
 const consumeWord = (word) =>
@@ -101,30 +99,22 @@ const consumeWord = (word) =>
 	))
 
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Unit
-const pushToken =
-	compose(State.modify, concat, bimap(Sum, Array.of))
+const pushToken = compose(State.modify, concat, bimap(Sum, Array.of))
 
 // lexToken :: String -> State (Pair Sum [Token]) Unit
-const lexToken =
-	pipeK(
-		consumeWord,
-		pushToken
-	)
+const lexToken = composeK(pushToken, consumeWord)
 
 // tokeniseWord :: Pair Sum [Token] -> String -> Pair Sum [Token]
-const tokeniseWord =
-	curry(compose(contramap(lexToken), execWith))
+const tokeniseWord = curry(compose(contramap(lexToken), execWith))
 
 // tokeniseWords :: [String] -> [Token]
-const tokeniseWords =
-	compose(snd, reduce(tokeniseWord, emptyTokenStack))
+const tokeniseWords = compose(snd, reduce(tokeniseWord, emptyTokenStack))
 
 // splitIntoWords :: String -> [String]
 const splitIntoWords = split(" ")
 
 // tokenise :: String -> Result [Token]
-const tokenise =
-	compose(Result.Ok, tokeniseWords, splitIntoWords)
+const tokenise = compose(Result.Ok, tokeniseWords, splitIntoWords)
 
 module.exports = {
 	tokenise
