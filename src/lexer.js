@@ -13,7 +13,7 @@ const concat = require("crocks/pointfree/concat");
 const constant = require("crocks/combinators/constant");
 const contramap = require("crocks/pointfree/contramap");
 const curry = require("crocks/helpers/curry");
-const evalWith = require("crocks/State/evalWith");
+const execWith = require("crocks/State/execWith");
 const fst = require("crocks/Pair/fst");
 const map = require("crocks/pointfree/map");
 const mreduce = require("crocks/helpers/mreduce");
@@ -100,11 +100,11 @@ const consumeWord = (word) =>
 		partial(Pair, wordLength(word))
 	))
 
-// pushToken :: Pair Number Token -> State (Pair Sum [Token])
+// pushToken :: Pair Number Token -> State (Pair Sum [Token]) Unit
 const pushToken =
-	compose(State.get, concat, bimap(Sum, Array.of))
+	compose(State.modify, concat, bimap(Sum, Array.of))
 
-// lexToken :: String -> State (Pair Sum [Token])
+// lexToken :: String -> State (Pair Sum [Token]) Unit
 const lexToken =
 	pipeK(
 		consumeWord,
@@ -113,7 +113,7 @@ const lexToken =
 
 // tokeniseWord :: Pair Sum [Token] -> String -> Pair Sum [Token]
 const tokeniseWord =
-	curry(compose(contramap(lexToken), evalWith))
+	curry(compose(contramap(lexToken), execWith))
 
 // tokeniseWords :: [String] -> [Token]
 const tokeniseWords =
