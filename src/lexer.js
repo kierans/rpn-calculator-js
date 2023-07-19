@@ -64,16 +64,17 @@ const isNumberToken =
 const isOperatorToken =
 	compose(map(constant(tokenType(Types.OPERATOR))), operatorFromValue)
 
+// matchFirstTokenType :: String -> Maybe Object
+const matchFirstTokenType =
+	compose(mreduce(First), applyFunctor([
+		isCommandToken,
+		isOperatorToken,
+		isNumberToken
+	]))
+
 // determineTokenType :: String -> Object
 const determineTokenType =
-	pipe(
-		compose(mreduce(First), applyFunctor([
-			isCommandToken,
-			isOperatorToken,
-			isNumberToken
-		])),
-		option(tokenType(Types.INVALID_INPUT))
-	)
+	compose(option(tokenType(Types.INVALID_INPUT)), matchFirstTokenType)
 
 // newToken :: String -> Number -> Token
 const newToken = curry((token, pos) =>
