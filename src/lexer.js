@@ -8,19 +8,21 @@ const Sum = require("crocks/Sum");
 
 const assign = require("crocks/helpers/assign");
 const bimap = require("crocks/pointfree/bimap");
+const binary = require("crocks/helpers/binary");
 const compose = require("crocks/helpers/compose");
 const composeK = require("crocks/helpers/composeK");
 const concat = require("crocks/pointfree/concat");
 const constant = require("crocks/combinators/constant");
 const contramap = require("crocks/pointfree/contramap");
+const converge = require("crocks/combinators/converge");
 const curry = require("crocks/helpers/curry");
 const execWith = require("crocks/State/execWith");
 const fst = require("crocks/Pair/fst");
+const liftA2 = require("crocks/helpers/liftA2");
 const map = require("crocks/pointfree/map");
 const mreduce = require("crocks/helpers/mreduce");
 const objOf = require("crocks/helpers/objOf");
 const option = require("crocks/pointfree/option");
-const partial = require("crocks/helpers/partial");
 const pipe = require("crocks/helpers/pipe");
 const reduce = require("crocks/pointfree/reduce");
 const resultToMaybe = require("crocks/Maybe/resultToMaybe");
@@ -84,20 +86,24 @@ const newToken = curry((token, pos) =>
 	})
 )
 
-// wordLength :: String -> Number
-const wordLength =
+// wordLengthInStream :: String -> Number
+const wordLengthInStream =
 	// add one to cater for the ' '
 	compose(add(1), length)
 
-// wordPos :: Pair Sum [Token] -> Number
-const wordPos = compose(valueOf, fst)
+// currentPosInStream :: Pair Sum [Token] -> Number
+const currentPosInStream = compose(valueOf, fst)
+
+// getWordLengthInStream :: String -> State (Pair Sum [Token]) Number
+const getWordLengthInStream = compose(State.get, constant, wordLengthInStream)
+
+// getTokenFromWord :: String -> State (Pair Sum [Token]) Token
+const getTokenFromWord = (word) =>
+	State.get(compose(newToken(word), currentPosInStream))
 
 // consumeWord :: String -> State (Pair Sum [Token]) (Pair Number Token)
-const consumeWord = (word) =>
-	State.get(pipe(
-		compose(newToken(word), wordPos),
-		partial(Pair, wordLength(word))
-	))
+const consumeWord =
+	converge(liftA2(binary(Pair)), getWordLengthInStream, getTokenFromWord)
 
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Unit
 const pushToken = compose(State.modify, concat, bimap(Sum, Array.of))
