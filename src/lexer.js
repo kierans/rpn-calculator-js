@@ -34,8 +34,7 @@ const { BigDecimal } = require("bigdecimal");
 
 const { add } = require("@epistemology-factory/crocks-ext/math");
 const { applyFunctor } = require("@epistemology-factory/crocks-ext/helpers");
-const { length } = require("@epistemology-factory/crocks-ext/helpers/lists");
-const { split }  = require("@epistemology-factory/crocks-ext/String");
+const { length, split }  = require("@epistemology-factory/crocks-ext/String");
 
 const { Types, commandFromValue, operatorFromValue } = require("./tokens");
 
