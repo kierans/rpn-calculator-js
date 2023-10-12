@@ -85,16 +85,16 @@ const newToken = curry((token, pos) =>
 	})
 )
 
-// wordLengthInStream :: String -> Number
-const wordLengthInStream =
+// wordLength :: String -> Number
+const wordLength =
 	// add one to cater for the ' '
 	compose(add(1), length)
 
 // currentPosInStream :: Pair Sum [Token] -> Number
 const currentPosInStream = compose(valueOf, fst)
 
-// getWordLengthInStream :: String -> State (Pair Sum [Token]) Number
-const getWordLengthInStream = compose(State.get, constant, wordLengthInStream)
+// getWordLength :: String -> State (Pair Sum [Token]) Number
+const getWordLength = compose(State.get, constant, wordLength)
 
 // getTokenFromWord :: String -> State (Pair Sum [Token]) Token
 const getTokenFromWord = (word) =>
@@ -102,7 +102,7 @@ const getTokenFromWord = (word) =>
 
 // consumeWord :: String -> State (Pair Sum [Token]) (Pair Number Token)
 const consumeWord =
-	converge(liftA2(binary(Pair)), getWordLengthInStream, getTokenFromWord)
+	converge(liftA2(binary(Pair)), getWordLength, getTokenFromWord)
 
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Unit
 const pushToken = compose(State.modify, concat, bimap(Sum, Array.of))
