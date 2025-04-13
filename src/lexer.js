@@ -16,7 +16,7 @@ const constant = require("crocks/combinators/constant");
 const contramap = require("crocks/pointfree/contramap");
 const converge = require("crocks/combinators/converge");
 const curry = require("crocks/helpers/curry");
-const execWith = require("crocks/State/execWith");
+const evalWith = require("crocks/State/evalWith");
 const fst = require("crocks/Pair/fst");
 const liftA2 = require("crocks/helpers/liftA2");
 const map = require("crocks/pointfree/map");
@@ -104,14 +104,14 @@ const getTokenFromWord = (word) =>
 const consumeWord =
 	converge(liftA2(binary(Pair)), getWordLength, getTokenFromWord)
 
-// pushToken :: Pair Number Token -> State (Pair Sum [Token]) Unit
-const pushToken = compose(State.modify, concat, bimap(Sum, Array.of))
+// pushToken :: Pair Number Token -> State (Pair Sum [Token]) Pair Sum [Token]
+const pushToken = compose(State.get, concat, bimap(Sum, Array.of))
 
-// lexToken :: String -> State (Pair Sum [Token]) Unit
+// lexToken :: String -> State (Pair Sum [Token]) Pair Sum [Token]
 const lexToken = composeK(pushToken, consumeWord)
 
 // tokeniseWord :: Pair Sum [Token] -> String -> Pair Sum [Token]
-const tokeniseWord = curry(compose(contramap(lexToken), execWith))
+const tokeniseWord = curry(compose(contramap(lexToken), evalWith))
 
 // tokeniseWords :: [String] -> [Token]
 const tokeniseWords = compose(snd, reduce(tokeniseWord, emptyTokenStack))
