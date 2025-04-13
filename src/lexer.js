@@ -27,6 +27,7 @@ const pipe = require("crocks/helpers/pipe");
 const reduce = require("crocks/pointfree/reduce");
 const resultToMaybe = require("crocks/Maybe/resultToMaybe");
 const snd = require("crocks/Pair/snd");
+const substitution = require("crocks/combinators/substitution");
 const tryCatch = require("crocks/Result/tryCatch");
 const valueOf = require("crocks/pointfree/valueOf");
 
@@ -35,6 +36,7 @@ const { BigDecimal } = require("bigdecimal");
 const { add } = require("@epistemology-factory/crocks-ext/math");
 const { applyFunctor } = require("@epistemology-factory/crocks-ext/helpers");
 const { length, split }  = require("@epistemology-factory/crocks-ext/String");
+const { pluck } = require("@epistemology-factory/crocks-ext/Record");
 
 const { Types, commandFromValue, operatorFromValue } = require("./tokens");
 
@@ -73,14 +75,22 @@ const matchFirstTokenType =
 		isNumberToken
 	]))
 
-// determineTokenType :: String -> Object
-const determineTokenType =
+// matchFirstTokenTypeForInput :: String -> Object
+const matchFirstTokenTypeForInput =
 	compose(option(tokenType(Types.INVALID_INPUT)), matchFirstTokenType)
 
+// matchFirstTokenTypeForRawToken :: Object -> Object
+const matchFirstTokenTypeForRawToken =
+	compose(matchFirstTokenTypeForInput, pluck("input"))
+
+// determineTokenType :: Object -> Token
+const determineTokenType =
+	substitution(assign, matchFirstTokenTypeForRawToken)
+
 // newToken :: String -> Number -> Token
-const newToken = curry((token, pos) =>
-	assign(determineTokenType(token), {
-		input: token,
+const newToken = curry((input, pos) =>
+	determineTokenType({
+		input,
 		position: pos
 	})
 )
@@ -107,11 +117,11 @@ const consumeWord =
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Pair Sum [Token]
 const pushToken = compose(State.get, concat, bimap(Sum, Array.of))
 
-// lexToken :: String -> State (Pair Sum [Token]) Pair Sum [Token]
-const lexToken = composeK(pushToken, consumeWord)
+// createToken :: String -> State (Pair Sum [Token]) Pair Sum [Token]
+const createToken = composeK(pushToken, consumeWord)
 
 // tokeniseWord :: Pair Sum [Token] -> String -> Pair Sum [Token]
-const tokeniseWord = curry(compose(contramap(lexToken), evalWith))
+const tokeniseWord = curry(compose(contramap(createToken), evalWith))
 
 // tokeniseWords :: [String] -> [Token]
 const tokeniseWords = compose(snd, reduce(tokeniseWord, emptyTokenStack))
