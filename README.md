@@ -42,7 +42,13 @@ Tested on node 18
 ### Run
 
 ```bash
-$ node src/rpn-calculator.js
+$ npm run calc
+```
+
+### Run Tests
+
+```shell
+$ npm run test
 ```
 
 ## Assumptions
