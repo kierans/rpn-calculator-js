@@ -40,6 +40,9 @@ const { pluck } = require("@epistemology-factory/crocks-ext/Record");
 
 const { Types, commandFromValue, operatorFromValue } = require("./tokens");
 
+// newPair :: a -> b -> Pair a b
+const newPair = binary(Pair);
+
 // emptyTokenStack :: Pair Sum [Token]
 const emptyTokenStack = Pair(Sum(1), [])
 
@@ -111,8 +114,7 @@ const getTokenFromWord = (word) =>
 	State.get(compose(newToken(word), currentPosInStream))
 
 // consumeWord :: String -> State (Pair Sum [Token]) (Pair Number Token)
-const consumeWord =
-	converge(liftA2(binary(Pair)), getWordLength, getTokenFromWord)
+const consumeWord = converge(liftA2(newPair), getWordLength, getTokenFromWord)
 
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Pair Sum [Token]
 const pushToken = compose(State.get, concat, bimap(Sum, Array.of))
