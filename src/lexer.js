@@ -31,14 +31,13 @@ const substitution = require("crocks/combinators/substitution");
 const tryCatch = require("crocks/Result/tryCatch");
 const valueOf = require("crocks/pointfree/valueOf");
 
-const { BigDecimal } = require("bigdecimal");
-
 const { add } = require("@epistemology-factory/crocks-ext/math");
 const { applyFunctor } = require("@epistemology-factory/crocks-ext/helpers");
 const { length, split }  = require("@epistemology-factory/crocks-ext/String");
 const { pluck } = require("@epistemology-factory/crocks-ext/Record");
 
 const { Types, commandFromValue, operatorFromValue } = require("./tokens");
+const { newBigDecimal } = require("./decimal");
 
 // newPair :: a -> b -> Pair a b
 const newPair = binary(Pair);
@@ -48,9 +47,6 @@ const emptyTokenStack = Pair(Sum(1), [])
 
 // tokenType :: String -> Object
 const tokenType = objOf("type")
-
-// newBigDecimal :: a -> BigDecimal
-const newBigDecimal = (a) => new BigDecimal(a)
 
 // parseNumber :: a -> Maybe BigDecimal
 const parseNumber = resultToMaybe(tryCatch(newBigDecimal))
