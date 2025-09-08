@@ -109,14 +109,14 @@ const getWordLength = compose(State.get, constant, wordLength)
 const getTokenFromWord = (word) =>
 	State.get(compose(newToken(word), currentPosInStream))
 
-// consumeWord :: String -> State (Pair Sum [Token]) (Pair Number Token)
-const consumeWord = converge(liftA2(newPair), getWordLength, getTokenFromWord)
+// matchWord :: String -> State (Pair Sum [Token]) (Pair Number Token)
+const matchWord = converge(liftA2(newPair), getWordLength, getTokenFromWord)
 
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Pair Sum [Token]
 const pushToken = compose(State.get, concat, bimap(Sum, Array.of))
 
 // createToken :: String -> State (Pair Sum [Token]) Pair Sum [Token]
-const createToken = composeK(pushToken, consumeWord)
+const createToken = composeK(pushToken, matchWord)
 
 // tokeniseWord :: Pair Sum [Token] -> String -> Pair Sum [Token]
 const tokeniseWord = curry(compose(contramap(createToken), evalWith))
@@ -127,7 +127,7 @@ const tokeniseWords = compose(snd, reduce(tokeniseWord, emptyTokenStack))
 // splitIntoWords :: String -> [String]
 const splitIntoWords = split(" ")
 
-// tokenise :: String -> Result [Token]
+// tokenise :: String -> Result Unit [Token]
 const tokenise = compose(Result.Ok, tokeniseWords, splitIntoWords)
 
 module.exports = {
