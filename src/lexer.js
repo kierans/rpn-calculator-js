@@ -23,7 +23,6 @@ const map = require("crocks/pointfree/map");
 const mreduce = require("crocks/helpers/mreduce");
 const objOf = require("crocks/helpers/objOf");
 const option = require("crocks/pointfree/option");
-const pipe = require("crocks/helpers/pipe");
 const reduce = require("crocks/pointfree/reduce");
 const resultToMaybe = require("crocks/Maybe/resultToMaybe");
 const snd = require("crocks/Pair/snd");
@@ -51,16 +50,16 @@ const tokenType = objOf("type")
 // parseNumber :: a -> Maybe BigDecimal
 const parseNumber = resultToMaybe(tryCatch(newBigDecimal))
 
+// parseNumberToken :: String -> Maybe Object
+const parseNumberToken = compose(map(objOf("number")), parseNumber)
+
 // isCommandToken :: String -> Maybe Object
 const isCommandToken =
 	compose(map(constant(tokenType(Types.COMMAND))), commandFromValue)
 
 // isNumberToken :: String -> Maybe Object
 const isNumberToken =
-	pipe(
-		parseNumber,
-		map(compose(assign(tokenType(Types.NUMBER)), objOf("number")))
-	)
+	compose(map(assign(tokenType(Types.NUMBER))), parseNumberToken)
 
 // isOperatorToken :: String -> Maybe Object
 const isOperatorToken =
@@ -74,23 +73,21 @@ const matchFirstTokenType =
 		isNumberToken
 	]))
 
-// matchFirstTokenTypeForInput :: String -> Object
-const matchFirstTokenTypeForInput =
+// matchFirstTokenTypeForWord :: String -> Object
+const matchFirstTokenTypeForWord =
 	compose(option(tokenType(Types.INVALID_INPUT)), matchFirstTokenType)
 
-// matchFirstTokenTypeForRawToken :: Object -> Object
-const matchFirstTokenTypeForRawToken =
-	compose(matchFirstTokenTypeForInput, pluck("input"))
+// matchFirstTokenTypeForInput :: Object -> Object
+const matchFirstTokenTypeForInput = compose(matchFirstTokenTypeForWord, pluck("input"))
 
 // determineTokenType :: Object -> Token
-const determineTokenType =
-	substitution(assign, matchFirstTokenTypeForRawToken)
+const determineTokenType = substitution(assign, matchFirstTokenTypeForInput)
 
 // newToken :: String -> Number -> Token
-const newToken = curry((input, pos) =>
+const newToken = curry((input, position) =>
 	determineTokenType({
 		input,
-		position: pos
+		position
 	})
 )
 
@@ -115,7 +112,7 @@ const matchWord = converge(liftA2(newPair), getWordLength, getTokenFromWord)
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Pair Sum [Token]
 const pushToken = compose(State.get, concat, bimap(Sum, Array.of))
 
-// createToken :: String -> State (Pair Sum [Token]) Pair Sum [Token]
+// createToken :: String -> State (Pair Sum [Token]) (Pair Sum [Token])
 const createToken = composeK(pushToken, matchWord)
 
 // tokeniseWord :: Pair Sum [Token] -> String -> Pair Sum [Token]
