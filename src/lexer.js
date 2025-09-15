@@ -112,11 +112,11 @@ const matchWord = converge(liftA2(newPair), getWordLength, getTokenFromWord)
 // pushToken :: Pair Number Token -> State (Pair Sum [Token]) Pair Sum [Token]
 const pushToken = compose(State.get, concat, bimap(Sum, Array.of))
 
-// createToken :: String -> State (Pair Sum [Token]) (Pair Sum [Token])
-const createToken = composeK(pushToken, matchWord)
+// createTokenFromWord :: String -> State (Pair Sum [Token]) (Pair Sum [Token])
+const createTokenFromWord = composeK(pushToken, matchWord)
 
 // tokeniseWord :: Pair Sum [Token] -> String -> Pair Sum [Token]
-const tokeniseWord = curry(compose(contramap(createToken), evalWith))
+const tokeniseWord = curry(compose(contramap(createTokenFromWord), evalWith))
 
 // tokeniseWords :: [String] -> [Token]
 const tokeniseWords = compose(snd, reduce(tokeniseWord, emptyTokenStack))
