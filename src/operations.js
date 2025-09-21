@@ -60,8 +60,8 @@ const unwrap = chain(identity)
 /*
  * Based on the computation result, return a function that will return the final operation result.
  */
-// computationToOperationResult :: Result a BigDecimal -> [Operation] -> String -> Result IllegalArithmeticOperationError Operation
-const computationToOperationResult = either(toIllegalArithmeticOperationError, toOperation)
+// computationResultToOperationResult :: Result a BigDecimal -> [Operation] -> String -> Result IllegalArithmeticOperationError Operation
+const computationResultToOperationResult = either(toIllegalArithmeticOperationError, toOperation)
 
 // lookupInTable :: (String -> IllegalStateError) -> Table a -> String -> Result IllegalStateError a
 const lookupInTable = compose(flip, getProp)
@@ -85,7 +85,7 @@ const getOperationExpression = compose(State.get, toOperationExpression)
 // doOperation :: Token -> (* -> Result IllegalArithmeticOperationError BigDecimal) -> ([Operation] -> Result IllegalArithmeticOperationError BigDecimal)
 const doOperation = curry((token, op) =>
 	evalUsing(liftA3(
-		computationToOperationResult,
+		computationResultToOperationResult,
 		computeValue(op),
 		getOperands(token),
 		getOperationExpression(token)
