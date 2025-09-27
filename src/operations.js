@@ -107,6 +107,5 @@ const pushNumberOperation = ({ input, number }) =>
 
 module.exports = {
 	arithmeticOperation,
-	opValue,
 	pushNumberOperation
 }
