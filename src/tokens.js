@@ -69,7 +69,7 @@ const commands = {
  */
 const types = {
 	COMMAND: "CommandToken",
-	INVALID_INPUT: "InvalidToken",
+	INVALID_INPUT: "InvalidInputToken",
 	NUMBER: "NumberToken",
 	OPERATOR: "OperatorToken",
 }
