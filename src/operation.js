@@ -3,9 +3,11 @@
 const Result = require("crocks/Result");
 
 const compose = require("crocks/helpers/compose");
+const compose2 = require("crocks/combinators/compose2");
 const constant = require("crocks/combinators/constant");
 const curry = require("crocks/helpers/curry");
 const ifElse = require("crocks/logic/ifElse");
+const flip = require("crocks/combinators/flip");
 const option = require("crocks/pointfree/option");
 
 const { isGreaterThan } = require("@epistemology-factory/crocks-ext/predicates");
@@ -64,9 +66,8 @@ const toOperation = curry((value, operands, expression) =>
 )
 
 // toOperationExpression :: Token -> [Operation] -> String
-const toOperationExpression = curry((token, operands) =>
-	joinPair(" ", operandsToExpression(operands), tokenToExpression(token))
-)
+const toOperationExpression =
+	compose2(flip(joinPair(" ")))(tokenToExpression)(operandsToExpression)
 
 module.exports = {
 	opValue,
