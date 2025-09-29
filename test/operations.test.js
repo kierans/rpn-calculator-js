@@ -78,7 +78,7 @@ describe("Operations", function() {
 				const operator = givenOperatorToken(Operators.ADDITION);
 
 				const operation =
-					arithmeticOperation(operator)([ a, b ]).either(throwContents, identity);
+					arithmeticOperation(operator)([ b, a ]).either(throwContents, identity);
 
 				operationTests("addition", 3, operator, operation);
 			});
@@ -87,7 +87,7 @@ describe("Operations", function() {
 				const operator = givenOperatorToken(Operators.SUBTRACTION);
 
 				const operation =
-					arithmeticOperation(operator)([ a, b ]).either(throwContents, identity);
+					arithmeticOperation(operator)([ b, a ]).either(throwContents, identity);
 
 				operationTests("subtraction", 1, operator, operation);
 			});
@@ -96,7 +96,7 @@ describe("Operations", function() {
 				const operator = givenOperatorToken(Operators.MULTIPLICATION);
 
 				const operation =
-					arithmeticOperation(operator)([ a, b ]).either(throwContents, identity);
+					arithmeticOperation(operator)([ b, a ]).either(throwContents, identity);
 
 				operationTests("multiplication", 2, operator, operation);
 			});
@@ -105,13 +105,13 @@ describe("Operations", function() {
 				const operator = givenOperatorToken(Operators.DIVISION);
 
 				const operation =
-					arithmeticOperation(operator)([ a, b ]).either(throwContents, identity);
+					arithmeticOperation(operator)([ b, a ]).either(throwContents, identity);
 
 				operationTests("division", 2, operator, operation);
 
 				it("should handle division by zero", function() {
 					const operation =
-						arithmeticOperation(operator)([ a, givenNumberOperation("0") ]).either(identity, throwResult);
+						arithmeticOperation(operator)([ givenNumberOperation("0"), a ]).either(identity, throwResult);
 
 					assertThat(operation, is(illegalArithmeticOperationError("'2 0 /' is an illegal arithmetic operation")));
 				});
@@ -123,7 +123,7 @@ describe("Operations", function() {
 				});
 
 				it("should return operands when undoing operation", function() {
-					assertThat(operation.undo(), is([ a, b ]));
+					assertThat(operation.undo(), is([ b, a ]));
 				});
 
 				it("should return operation as expression", function() {

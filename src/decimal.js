@@ -8,7 +8,7 @@ const tryCatch = require("crocks/Result/tryCatch");
 const { BigDecimal } = require("bigdecimal");
 
 // addition :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const addition = binary(tryCatch((a, b) => a.add(b)))
+const addition = binary(tryCatch((a, b) => b.add(a)))
 
 // decimalToDouble :: BigDecimal -> Double
 const decimalToDouble = (a) => a.doubleValue()
@@ -17,10 +17,10 @@ const decimalToDouble = (a) => a.doubleValue()
 const decimalToString = (a) => a.toString()
 
 // division :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const division = binary(tryCatch((a, b) => a.divide(b)))
+const division = binary(tryCatch((a, b) => b.divide(a)))
 
 // multiplication :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const multiplication = binary(tryCatch((a, b) => a.multiply(b)))
+const multiplication = binary(tryCatch((a, b) => b.multiply(a)))
 
 // newBigDecimal :: a -> BigDecimal
 const newBigDecimal = (a) => new BigDecimal(a)
@@ -29,7 +29,7 @@ const newBigDecimal = (a) => new BigDecimal(a)
 const squareRoot = compose(map(newBigDecimal), tryCatch(Math.sqrt), decimalToDouble)
 
 // subtraction :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const subtraction = binary(tryCatch((a, b) => a.subtract(b)))
+const subtraction = binary(tryCatch((a, b) => b.subtract(a)))
 
 module.exports = {
 	addition,

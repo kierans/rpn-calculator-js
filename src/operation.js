@@ -5,12 +5,17 @@ const Result = require("crocks/Result");
 const compose = require("crocks/helpers/compose");
 const constant = require("crocks/combinators/constant");
 const curry = require("crocks/helpers/curry");
-const map = require("crocks/pointfree/map");
+const ifElse = require("crocks/logic/ifElse");
+const option = require("crocks/pointfree/option");
 
-const { joinPair, join } = require("@epistemology-factory/crocks-ext/String");
+const { isGreaterThan } = require("@epistemology-factory/crocks-ext/predicates");
+const { joinPair } = require("@epistemology-factory/crocks-ext/String");
+const { length } = require("@epistemology-factory/crocks-ext/helpers/lists");
+const { mapCollectRight } = require("@epistemology-factory/crocks-ext/pointfree/collect");
 
 const { decimalToString } = require("./decimal");
 const { illegalArithmeticOperationError } = require("./errors");
+const { pop } = require("./array");
 
 /**
  * Records the details of an operation in the calculator.
@@ -34,7 +39,12 @@ const opValue = (operation) => operation.value()
 const opValueAsString = compose(decimalToString, opValue)
 
 // operandsToExpression :: [Operation] -> String
-const operandsToExpression = compose(join(" "), map(opValueAsString))
+const operandsToExpression =
+	ifElse(
+		compose(isGreaterThan(1), length),
+		compose(option(""), mapCollectRight(opValueAsString, joinPair(" "))),
+		compose(opValueAsString, pop)
+	)
 
 // tokenToExpression :: Token -> String
 const tokenToExpression = ({ input }) => input

@@ -96,12 +96,12 @@ const doOperation = curry((token, op) =>
 const lookupOperatorForToken =
 	substitution(compose(map, doOperation), lookupInOperatorsTableForToken)
 
-// arithmeticOperation :: OperatorToken -> [Operation] -> Result CalculatorError Operation
+// arithmeticOperation :: OperatorToken -> [Operation] -> Result IllegalArithmeticOperationError Operation
 const arithmeticOperation =
 	// need to unwrap the inner Result
 	compose(promap(Result.Ok, unwrap), pa, lookupOperatorForToken)
 
-// pushNumberOperation :: NumberToken -> Result CalculatorError Operation
+// pushNumberOperation :: NumberToken -> Result Unit Operation
 const pushNumberOperation = ({ input, number }) =>
 	toOperation(number, [], input)
 
