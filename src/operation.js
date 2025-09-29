@@ -34,6 +34,9 @@ const { pop } = require("./array");
  * }
  */
 
+// opUndo :: Operation -> [Operation]
+const opUndo = (operation) => operation.undo()
+
 // opValue :: Operation -> BigDecimal
 const opValue = (operation) => operation.value()
 
@@ -70,6 +73,7 @@ const toOperationExpression =
 	compose2(flip(joinPair(" ")))(tokenToExpression)(operandsToExpression)
 
 module.exports = {
+	opUndo,
 	opValue,
 	opValueAsString,
 	toIllegalArithmeticOperationError,
