@@ -1,6 +1,12 @@
 "use strict";
 
+const Result = require("crocks/Result");
+
+const chain = require("crocks/pointfree/chain");
 const compose = require("crocks/helpers/compose");
+const constant = require("crocks/combinators/constant");
+const curry = require("crocks/helpers/curry");
+const either = require("crocks/pointfree/either");
 const isSame = require("crocks/predicates/isSame");
 const find = require("crocks/Maybe/find");
 const flip = require("crocks/combinators/flip");
@@ -8,6 +14,8 @@ const fst = require("crocks/Pair/fst");
 const map = require("crocks/pointfree/map");
 const snd = require("crocks/Pair/snd");
 const toPairs = require("crocks/Pair/toPairs");
+
+const { reduceWhile } = require("@epistemology-factory/crocks-ext/pointfree/reduce");
 
 /**
  * TODO: Work out how to do "extends" in HM
@@ -89,11 +97,21 @@ const commandFromValue = fromValue(commands)
 // operatorFromValue :: String -> Maybe String
 const operatorFromValue = fromValue(operators)
 
+// evaluateTokens :: (Token -> Calculation) -> [Operation] -> [Token] -> CalculationResult
+const evaluateTokens = curry((fn, stack) =>
+	reduceWhile(
+		compose(constant, either(constant(false), constant(true))),
+		flip(compose(chain, fn)),
+		Result.Ok(stack)
+	)
+)
+
 module.exports = {
 	Operators: operators,
 	Commands: commands,
 	Types: types,
 
 	commandFromValue,
+	evaluateTokens,
 	operatorFromValue
 }
