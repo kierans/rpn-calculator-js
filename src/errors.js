@@ -1,5 +1,6 @@
 "use strict";
 
+const assign = require("crocks/helpers/assign");
 const curry = require("crocks/helpers/curry");
 
 /**
@@ -11,6 +12,7 @@ const curry = require("crocks/helpers/curry");
  * IllegalArithmeticOperationError :: {
  *   type :: "illegal-arithmetic-operation-error"
  *   message :: String
+ *   operands: [Operation]
  * }
  *
  * IllegalStateError :: {
@@ -30,8 +32,10 @@ const error = curry((type, message) => ({
 	message
 }))
 
-// illegalArithmeticOperationError :: String -> IllegalArithmeticOperationError
-const illegalArithmeticOperationError = error(ERROR_TYPES.ILLEGAL_ARITHMETIC_OPERATION_ERROR)
+// illegalArithmeticOperationError :: String -> [Operation] -> IllegalArithmeticOperationError
+const illegalArithmeticOperationError = curry((message, operands) =>
+	assign(error(ERROR_TYPES.ILLEGAL_ARITHMETIC_OPERATION_ERROR)(message), { operands })
+)
 
 // illegalStateError :: String -> IllegalStateError
 const illegalStateError = error(ERROR_TYPES.ILLEGAL_STATE_ERROR)

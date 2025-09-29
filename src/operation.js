@@ -50,9 +50,9 @@ const operandsToExpression =
 const tokenToExpression = ({ input }) => input
 
 // toIllegalArithmeticOperationError :: e -> [Operation] -> String -> Result IllegalArithmeticOperationError Unit
-const toIllegalArithmeticOperationError = constant(constant((expression) =>
-	Result.Err(illegalArithmeticOperationError(`'${expression}' is an illegal arithmetic operation`))
-))
+const toIllegalArithmeticOperationError = constant((operands) => (expression) =>
+	Result.Err(illegalArithmeticOperationError(`'${expression}' is an illegal arithmetic operation`)(operands))
+)
 
 // toOperation :: BigDecimal -> [Operation] -> String -> Result Unit Operation
 const toOperation = curry((value, operands, expression) =>
