@@ -15,7 +15,7 @@
     "mocha": "^10.2.0"
   },
   "dependencies": {
-    "@epistemology-factory/crocks-ext": "^0.0.29",
+    "@epistemology-factory/crocks-ext": "^0.0.31",
     "crocks": "^0.12.4",
     "decimal.js": "^10.6.0"
   }
