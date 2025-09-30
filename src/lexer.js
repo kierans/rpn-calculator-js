@@ -36,7 +36,7 @@ const { length, split }  = require("@epistemology-factory/crocks-ext/String");
 const { pluck } = require("@epistemology-factory/crocks-ext/Record");
 
 const { Types, commandFromValue, operatorFromValue } = require("./tokens");
-const { newBigDecimal } = require("./decimal");
+const { newDecimal } = require("./decimal");
 
 // newPair :: a -> b -> Pair a b
 const newPair = binary(Pair);
@@ -47,8 +47,8 @@ const emptyTokenStack = Pair(Sum(1), [])
 // tokenType :: String -> Object
 const tokenType = objOf("type")
 
-// parseNumber :: a -> Maybe BigDecimal
-const parseNumber = resultToMaybe(tryCatch(newBigDecimal))
+// parseNumber :: a -> Maybe Decimal
+const parseNumber = resultToMaybe(tryCatch(newDecimal))
 
 // parseNumberToken :: String -> Maybe Object
 const parseNumberToken = compose(map(objOf("number")), parseNumber)

@@ -40,7 +40,7 @@ const {
 
 /*
  * operators :: {
- * 	[Operator]: * -> Result IllegalArithmeticOperationError BigDecimal
+ * 	[Operator]: * -> Result Error Decimal
  * }
  */
 const operators = {
@@ -60,7 +60,7 @@ const unwrap = chain(identity)
 /*
  * Based on the computation result, return a function that will return the final operation result.
  */
-// computationResultToOperationResult :: Result a BigDecimal -> [Operation] -> String -> Result IllegalArithmeticOperationError Operation
+// computationResultToOperationResult :: Result e Decimal -> [Operation] -> String -> Result IllegalArithmeticOperationError Operation
 const computationResultToOperationResult = either(toIllegalArithmeticOperationError, toOperation)
 
 // lookupInTable :: (String -> IllegalStateError) -> Table a -> String -> Result IllegalStateError a
@@ -69,11 +69,11 @@ const lookupInTable = compose(flip, getProp)
 // operatorsLookupError :: String -> IllegalStateError
 const operatorsLookupError = (input) => illegalStateError(`Can't operate on op '${input}'`)
 
-// lookupInOperatorsTableForToken :: Token -> Result IllegalStateError (* -> Result IllegalArithmeticOperationError BigDecimal)
+// lookupInOperatorsTableForToken :: Token -> Result IllegalStateError (* -> Result IllegalArithmeticOperationError Decimal)
 const lookupInOperatorsTableForToken =
 	compose(lookupInTable(operatorsLookupError)(operators), pluck("input"))
 
-// computeValue :: (* -> Result IllegalArithmeticOperationError BigDecimal) -> State [Operation] Result CalculatorError BigDecimal
+// computeValue :: (* -> Result IllegalArithmeticOperationError Decimal) -> State [Operation] Result CalculatorError Decimal
 const computeValue = compose(State.get, mapReduce(opValue, flip(applyTo)))
 
 // getOperands :: Token -> State [Operation]
@@ -82,7 +82,7 @@ const getOperands = constant(State.get())
 // getOperationExpression :: Token -> State [Operation] String
 const getOperationExpression = compose(State.get, toOperationExpression)
 
-// doOperation :: Token -> (* -> Result IllegalArithmeticOperationError BigDecimal) -> ([Operation] -> Result IllegalArithmeticOperationError BigDecimal)
+// doOperation :: Token -> (* -> Result IllegalArithmeticOperationError Decimal) -> ([Operation] -> Result IllegalArithmeticOperationError Decimal)
 const doOperation = curry((token, op) =>
 	evalUsing(liftA3(
 		computationResultToOperationResult,
@@ -92,7 +92,7 @@ const doOperation = curry((token, op) =>
 	))
 )
 
-// lookupOperatorForToken :: Token -> Result IllegalStateError ([Operation] -> Result IllegalArithmeticOperationError BigDecimal)
+// lookupOperatorForToken :: Token -> Result IllegalStateError ([Operation] -> Result IllegalArithmeticOperationError Decimal)
 const lookupOperatorForToken =
 	substitution(compose(map, doOperation), lookupInOperatorsTableForToken)
 

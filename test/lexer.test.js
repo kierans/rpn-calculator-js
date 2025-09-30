@@ -1,6 +1,5 @@
 "use strict";
 
-const { BigDecimal } = require("bigdecimal");
 const { curry, identity } = require("crocks");
 const { allOf, assertThat, equalTo, hasItem, hasProperty, is } = require("hamjest");
 
@@ -8,6 +7,7 @@ const { join } = require("@epistemology-factory/crocks-ext/String");
 const { throwContents } = require("@epistemology-factory/crocks-ext/utils");
 
 const { Types } = require("../src/tokens");
+const { newDecimal } = require("../src/decimal");
 const { tokenise } = require("../src/lexer");
 
 describe("Lexer", function() {
@@ -16,7 +16,7 @@ describe("Lexer", function() {
 
 		const tokens = lex([ value ]);
 
-		assertThat(tokens, hasItem(isNumberToken(new BigDecimal(value), value, 1)));
+		assertThat(tokens, hasItem(isNumberToken(newDecimal(value), value, 1)));
 	});
 
 	it("should parse command tokens", function() {
@@ -57,7 +57,7 @@ describe("Lexer", function() {
 
 		assertThat(tokens.length, is(3));
 		assertThat(tokens[0], isCommandToken(input[0], 1));
-		assertThat(tokens[1], isNumberToken(new BigDecimal("4"), input[1], 7));
+		assertThat(tokens[1], isNumberToken(newDecimal("4"), input[1], 7));
 		assertThat(tokens[2], isOperatorToken(input[2], 9));
 	});
 });

@@ -4,12 +4,8 @@ const converge = require("crocks/combinators/converge");
 const curry = require("crocks/helpers/curry");
 const setProp = require("crocks/helpers/setProp");
 
-const { BigDecimal } = require("bigdecimal");
-
 const { Types } = require("../src/tokens");
-
-// bigDecimal :: String -> BigDecimal
-const bigDecimal = (value) => new BigDecimal(value)
+const { newDecimal } = require("../src/decimal");
 
 // givenToken :: String -> String -> Token
 const givenToken = curry((type, value) => ({
@@ -28,7 +24,7 @@ const givenInvalidInput = () => givenToken(Types.INVALID_INPUT)("foo")
 const givenNumberToken =
 	converge(
 		setProp("number"),
-		bigDecimal,
+		newDecimal,
 		givenToken(Types.NUMBER)
 	)
 

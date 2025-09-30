@@ -36,7 +36,7 @@ const { reduceWhile } = require("@epistemology-factory/crocks-ext/pointfree/redu
  *
  * NumberToken :: {
  *   type :: 'NumberToken'
- *   number :: BigDecimal
+ *   number :: Decimal
  * }
  *
  * OperatorToken :: {

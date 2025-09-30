@@ -1,43 +1,47 @@
 "use strict";
 
+const Result = require("crocks/Result");
+
 const binary = require("crocks/helpers/binary");
-const compose = require("crocks/helpers/compose");
-const map = require("crocks/pointfree/map");
+const ifElse = require("crocks/logic/ifElse");
 const tryCatch = require("crocks/Result/tryCatch");
 
-const { BigDecimal } = require("bigdecimal");
+const { Decimal } = require("decimal.js");
 
-// addition :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
+// isInfinity :: Decimal -> Boolean
+const isInfinity = (a) => !a.isFinite()
+
+// checkForInfinity :: Decimal -> Result Error Decimal
+const checkForInfinity =
+	ifElse(isInfinity, () => Result.Err(new Error("Infinity result returned")), Result.Ok)
+
+// addition :: Decimal -> Decimal -> Result IllegalArithmeticOperationError Decimal
 const addition = binary(tryCatch((a, b) => b.add(a)))
 
-// decimalToDouble :: BigDecimal -> Double
-const decimalToDouble = (a) => a.doubleValue()
-
-// decimalToString :: BigDecimal -> String
+// decimalToString :: Decimal -> String
 const decimalToString = (a) => a.toString()
 
-// division :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const division = binary(tryCatch((a, b) => b.divide(a)))
+// division :: Decimal -> Decimal -> Result Error Decimal
+const division = binary((a, b) => checkForInfinity(b.div(a)))
 
-// multiplication :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const multiplication = binary(tryCatch((a, b) => b.multiply(a)))
+// multiplication :: Decimal -> Decimal -> Result Error Decimal
+const multiplication = binary(tryCatch((a, b) => b.times(a)))
 
-// newBigDecimal :: a -> BigDecimal
-const newBigDecimal = (a) => new BigDecimal(a)
+// newDecimal :: a -> Decimal
+const newDecimal = (a) => new Decimal(a)
 
-// squareRoot :: BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const squareRoot = compose(map(newBigDecimal), tryCatch(Math.sqrt), decimalToDouble)
+// squareRoot :: Decimal -> Result Error Decimal
+const squareRoot = tryCatch((a) => a.sqrt())
 
-// subtraction :: BigDecimal -> BigDecimal -> Result IllegalArithmeticOperationError BigDecimal
-const subtraction = binary(tryCatch((a, b) => b.subtract(a)))
+// subtraction :: Decimal -> Decimal -> Result Error Decimal
+const subtraction = binary(tryCatch((a, b) => b.minus(a)))
 
 module.exports = {
 	addition,
-	decimalToDouble,
 	decimalToString,
 	division,
 	multiplication,
-	newBigDecimal,
+	newDecimal,
 	squareRoot,
 	subtraction
 }

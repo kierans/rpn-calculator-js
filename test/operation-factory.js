@@ -2,11 +2,11 @@
 
 const constant = require("crocks/combinators/constant");
 
-const { BigDecimal } = require("bigdecimal");
+const { newDecimal } = require("../src/decimal");
 
 // givenNumberOperation :: String -> Operation
 const givenNumberOperation = (value) => ({
-	value: constant(new BigDecimal(value)),
+	value: constant(newDecimal(value)),
 	undo: constant([]),
 	asExpression: constant(value)
 })

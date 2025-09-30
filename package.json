@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@epistemology-factory/crocks-ext": "^0.0.29",
-    "bigdecimal": "^0.6.1",
-    "crocks": "^0.12.4"
+    "crocks": "^0.12.4",
+    "decimal.js": "^10.6.0"
   }
 }

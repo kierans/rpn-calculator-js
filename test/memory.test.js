@@ -81,7 +81,7 @@ describe("Memory", function() {
 		const nums = result.map(opValue);
 
 		assertThat(nums.length, is(1));
-		assertThat(nums[0].intValue(), is(12));
+		assertThat(nums[0].toNumber(), is(12));
 	});
 
 	it("should undo composite operations", function() {
@@ -98,8 +98,8 @@ describe("Memory", function() {
 		const nums = result.map(opValue);
 
 		assertThat(nums.length, is(2));
-		assertThat(nums[0].intValue(), is(5));
-		assertThat(nums[1].intValue(), is(20));
+		assertThat(nums[0].toNumber(), is(5));
+		assertThat(nums[1].toNumber(), is(20));
 	});
 
 	it("should ignore undo on empty stack", function() {
@@ -120,8 +120,8 @@ describe("Memory", function() {
 		const nums = result.snd().map(opValue);
 
 		assertThat(nums.length, is(2));
-		assertThat(nums[0].intValue(), is(0));
-		assertThat(nums[1].intValue(), is(1));
+		assertThat(nums[0].toNumber(), is(0));
+		assertThat(nums[1].toNumber(), is(1));
 	});
 });
 

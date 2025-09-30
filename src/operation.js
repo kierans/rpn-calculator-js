@@ -28,7 +28,7 @@ const { pop } = require("./array");
  * while allowing functions to be applied to them in a type-safe manner.
  *
  * Operation :: {
- *   value :: () -> BigDecimal
+ *   value :: () -> Decimal
  *   undo :: () -> [Operation]
  *   asExpression :: () -> String
  * }
@@ -37,7 +37,7 @@ const { pop } = require("./array");
 // opUndo :: Operation -> [Operation]
 const opUndo = (operation) => operation.undo()
 
-// opValue :: Operation -> BigDecimal
+// opValue :: Operation -> Decimal
 const opValue = (operation) => operation.value()
 
 // opValueAsString :: Operation -> String
@@ -59,7 +59,7 @@ const toIllegalArithmeticOperationError = constant((operands) => (expression) =>
 	Result.Err(illegalArithmeticOperationError(`'${expression}' is an illegal arithmetic operation`)(operands))
 )
 
-// toOperation :: BigDecimal -> [Operation] -> String -> Result Unit Operation
+// toOperation :: Decimal -> [Operation] -> String -> Result Unit Operation
 const toOperation = curry((value, operands, expression) =>
 	Result.Ok({
 		value: constant(value),

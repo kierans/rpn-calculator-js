@@ -57,7 +57,7 @@ describe("Operations", function() {
 					arithmeticOperation(operator)([ operand ]).either(throwContents, identity);
 
 				it("should perform square root", function() {
-					assertThat(operation.value().intValue(), is(equalTo(2)));
+					assertThat(operation.value().toNumber(), is(equalTo(2)));
 				});
 
 				it("should return operand when undoing operation", function() {
@@ -119,7 +119,7 @@ describe("Operations", function() {
 
 			function operationTests(type, expectedValue, operator, operation) {
 				it(`should perform ${type}`, function() {
-					assertThat(operation.value().intValue(), is(equalTo(expectedValue)));
+					assertThat(operation.value().toNumber(), is(equalTo(expectedValue)));
 				});
 
 				it("should return operands when undoing operation", function() {

@@ -40,7 +40,7 @@ const invalidInputError = (message, token) =>
 
 const withIntValue = (value) =>
 	({
-		matches: (actual) => actual.value().intValue() === value,
+		matches: (actual) => actual.value().toNumber() === value,
 		describeTo: (description) =>
 			description
 				.append('An Operation with value ')
@@ -48,7 +48,7 @@ const withIntValue = (value) =>
 		describeMismatch: (actual, description) =>
 			description
 				.append('was ')
-				.appendValue(actual.value().intValue())
+				.appendValue(actual.value().toNumber())
 	})
 
 module.exports = {
