@@ -15,6 +15,7 @@ const objOf = require("crocks/helpers/objOf");
  * IllegalArithmeticOperationError :: {
  *   type :: "illegal-arithmetic-operation-error"
  *   message :: String
+ *   expression: String,
  *   operands: [Operation]
  * }
  *
@@ -55,8 +56,12 @@ const errorWithToken = curry((type, message) =>
 )
 
 // illegalArithmeticOperationError :: String -> [Operation] -> IllegalArithmeticOperationError
-const illegalArithmeticOperationError = curry((message, operands) =>
-	assign(error(ERROR_TYPES.ILLEGAL_ARITHMETIC_OPERATION_ERROR)(message), { operands })
+const illegalArithmeticOperationError = curry((expression, operands) =>
+	assign
+		(error
+			(ERROR_TYPES.ILLEGAL_ARITHMETIC_OPERATION_ERROR)
+			(`'${expression}' is an illegal arithmetic operation`))
+		({ expression, operands })
 )
 
 // illegalStateError :: String -> IllegalStateError

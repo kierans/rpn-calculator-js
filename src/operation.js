@@ -56,7 +56,7 @@ const tokenToExpression = ({ input }) => input
 
 // toIllegalArithmeticOperationError :: e -> [Operation] -> String -> Result IllegalArithmeticOperationError Unit
 const toIllegalArithmeticOperationError = constant((operands) => (expression) =>
-	Result.Err(illegalArithmeticOperationError(`'${expression}' is an illegal arithmetic operation`)(operands))
+	Result.Err(illegalArithmeticOperationError(expression)(operands))
 )
 
 // toOperation :: Decimal -> [Operation] -> String -> Result Unit Operation
