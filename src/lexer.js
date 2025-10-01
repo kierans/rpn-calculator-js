@@ -10,6 +10,7 @@ const assign = require("crocks/helpers/assign");
 const bimap = require("crocks/pointfree/bimap");
 const binary = require("crocks/helpers/binary");
 const compose = require("crocks/helpers/compose");
+const compose2 = require("crocks/combinators/compose2");
 const composeK = require("crocks/helpers/composeK");
 const concat = require("crocks/pointfree/concat");
 const constant = require("crocks/combinators/constant");
@@ -26,14 +27,12 @@ const option = require("crocks/pointfree/option");
 const reduce = require("crocks/pointfree/reduce");
 const resultToMaybe = require("crocks/Maybe/resultToMaybe");
 const snd = require("crocks/Pair/snd");
-const substitution = require("crocks/combinators/substitution");
 const tryCatch = require("crocks/Result/tryCatch");
 const valueOf = require("crocks/pointfree/valueOf");
 
 const { add } = require("@epistemology-factory/crocks-ext/math");
 const { applyFunctor } = require("@epistemology-factory/crocks-ext/helpers");
 const { length, split }  = require("@epistemology-factory/crocks-ext/String");
-const { pluck } = require("@epistemology-factory/crocks-ext/Record");
 
 const { Types, commandFromValue, operatorFromValue } = require("./tokens");
 const { newDecimal } = require("./decimal");
@@ -77,19 +76,12 @@ const matchFirstTokenType =
 const matchFirstTokenTypeForWord =
 	compose(option(tokenType(Types.INVALID_INPUT)), matchFirstTokenType)
 
-// matchFirstTokenTypeForInput :: Object -> Object
-const matchFirstTokenTypeForInput = compose(matchFirstTokenTypeForWord, pluck("input"))
-
-// determineTokenType :: Object -> Token
-const determineTokenType = substitution(assign, matchFirstTokenTypeForInput)
+// determineTokenType :: String -> Object
+const determineTokenType =
+	converge(assign, matchFirstTokenTypeForWord, objOf("input"))
 
 // newToken :: String -> Number -> Token
-const newToken = curry((input, position) =>
-	determineTokenType({
-		input,
-		position
-	})
-)
+const newToken = compose2(assign, determineTokenType, objOf("position"))
 
 // wordLength :: String -> Number
 const wordLength =
