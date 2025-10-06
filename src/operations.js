@@ -38,6 +38,15 @@ const {
 	toOperationExpression
 } = require("./operation");
 
+// call :: (a -> b) -> a -> b
+const call = flip(applyTo)
+
+// pa :: Applicative m => m (a -> b) -> m a -> m b
+const pa = flip(ap)
+
+// unwrap :: Chainable m => m (m a) -> m a
+const unwrap = chain(identity)
+
 /*
  * operators :: {
  * 	[Operator]: * -> Result Error Decimal
@@ -50,12 +59,6 @@ const operators = {
 	[Operators.MULTIPLICATION]: multiplication,
 	[Operators.SUBTRACTION]: subtraction
 }
-
-// pa :: Applicative m => m (a -> b) -> m a -> m b
-const pa = flip(ap)
-
-// unwrap :: Chainable m => m (m a) -> m a
-const unwrap = chain(identity)
 
 /*
  * Based on the computation result, return a function that will return the final operation result.
@@ -73,8 +76,8 @@ const operatorsLookupError = (input) => illegalStateError(`Can't operate on op '
 const lookupInOperatorsTableForToken =
 	compose(lookupInTable(operatorsLookupError)(operators), pluck("input"))
 
-// computeValue :: (* -> Result IllegalArithmeticOperationError Decimal) -> State [Operation] Result CalculatorError Decimal
-const computeValue = compose(State.get, mapReduce(opValue, flip(applyTo)))
+// computeValue :: (* -> Result IllegalArithmeticOperationError Decimal) -> State [Operation] Result IllegalArithmeticOperationError Decimal
+const computeValue = compose(State.get, mapReduce(opValue, call))
 
 // getOperands :: Token -> State [Operation]
 const getOperands = constant(State.get())
